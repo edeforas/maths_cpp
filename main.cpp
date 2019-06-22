@@ -3,7 +3,7 @@
 
 int main()
 {
-//	syracuse_test_numbers();
+	syracuse_test_numbers();
 	syracuse_test_cycle();
 	return 0;
 }

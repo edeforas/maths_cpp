@@ -72,18 +72,18 @@ bool is_trivial_cycle(biginteger iCycle)
 	//remove all trivial cycle end as "xxyyxyxy100" to "xxyyxyxy"
 	while (iCycle)
 	{
-		int trivial = iCycle & (4 + 2 + 1);
-		if (trivial == 4)
-			iCycle >>= 3;
+		int trivial = iCycle & 7; //7=0b111 get 3 cycles
+		if (trivial == 4) //4 means 0x100, so odd,even,even = trivial cycle
+			iCycle >>= 3; //discard the trivial cycle
 		else
-			return false; //non trivial found
+			return false; //no a trivial cycle ! !!! WOW
 	}
 	return true; //all trivial removed
 }
 ////////////////////////////////////////////////////////////////////////////////
 void syracuse_test_cycle()
 {
-	cout << "test cycle with size =1 to 32" << endl;
+	cout << "test all cycle with size =1 to 40" << endl;
 	cout << "compute the global affine function and test if a integer is the solution" << endl;
 
 	//use the bitmask iSequence
@@ -91,6 +91,8 @@ void syracuse_test_cycle()
 	//odd is bit=1
 	//every cycle start with odd number so msb=1
 	biginteger iCycle = 0;
+	
+	int iNbTestedCycles = 0;
 
 	while(iCycle< (1LL << 40))
 	{
@@ -104,8 +106,9 @@ void syracuse_test_cycle()
 				cout << "NONtrivial cycle found !!!!!! WOW  =" << iCycle << " size=" << iSize << endl;
 		}
 	
+		iNbTestedCycles++;
 		iCycle = next_valid_cycle(iCycle);
 	}
 
-	cout << "end of computation" << endl;
+	cout << "end of computation, total nb cycles tested=" << iNbTestedCycles  << endl;
 }
