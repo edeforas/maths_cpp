@@ -19,14 +19,19 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="biginteger.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="syracuse_test_cycle.cpp" />
     <ClCompile Include="syracuse_test_numbers.cpp" />
+    <ClCompile Include="syracuse_test_numbers_mod_k.cpp" />
+    <ClCompile Include="syracuse_test_numbers_mod_k_v2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="biginteger.h" />
     <ClInclude Include="syracuse_test_cycle.h" />
     <ClInclude Include="syracuse_test_numbers.h" />
+    <ClInclude Include="syracuse_test_numbers_mod_k.h" />
+    <ClInclude Include="syracuse_test_numbers_mod_k_v2.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

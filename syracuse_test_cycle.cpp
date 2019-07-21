@@ -51,7 +51,7 @@ biginteger next_valid_cycle(biginteger i) //compute the next valid cycle
 {
 	//assume the actual cycle is valid
 	assert((i & 1) == 0);
-	assert(i & (i << 1) == 0);
+	assert(i & (i << 1) == 0); //simple & is intentionnal
 
 	i += 2;
 
