@@ -42,7 +42,7 @@ bool test_iterate(biginteger b, biginteger k)
 void syracuse_test_numbers_mod_k_v2()
 {
 	vector<biginteger> vCandidate,vNewCandidate;
-	vCandidate.push_back(0); //every numbers
+	vCandidate.push_back(0); //all numbers
 	biginteger k = 2;
 
 	// test at k level
@@ -67,9 +67,9 @@ void syracuse_test_numbers_mod_k_v2()
 		std::sort(vCandidate.begin(), vCandidate.end());
 		cout << "m=" << m << " k=" << k << " numbers=" << vCandidate.size() << " proportion=" << (100.f*vCandidate.size()) / k << " %" << endl;
 	
-		int iSizeToDisp = std::min<size_t>(vCandidate.size(), 50);
+		size_t iSizeToDisp = std::min<size_t>(vCandidate.size(), 50);
 
-		for (int i = 0; i < iSizeToDisp; i++)
+		for (size_t i = 0; i < iSizeToDisp; i++)
 			cout << vCandidate[i] << " ";
 		cout << endl << endl;
 
