@@ -6,8 +6,8 @@
 int main()
 {
 	//syracuse_test_numbers();
-	//syracuse_test_cycle();
+	syracuse_test_cycle();
 	//syracuse_test_numbers_mod_k();
-	syracuse_test_numbers_mod_k_v2();
+	//syracuse_test_numbers_mod_k_v2();
 	return 0;
 }

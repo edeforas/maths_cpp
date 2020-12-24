@@ -1,9 +1,30 @@
 #include <iostream>
+#include <string>
 #include <cassert>
 
 #include "biginteger.h"
 using namespace std;
 
+////////////////////////////////////////////////////////////////////////////////
+// convert the cycle to a string
+string cycle_to_string(biginteger i)
+{
+
+	if (i == 0)
+		return "p";
+
+	string s;
+	while (i != 0)
+	{
+		if (i & 1)
+			s = "p" + s;
+		else
+			s = "n" + s;
+
+		i >>= 1;
+	}
+	return s;
+}
 ////////////////////////////////////////////////////////////////////////////////
 //compute the size of the sequence, i.e. the pos of the msb
 int msb_pos(biginteger i)
@@ -50,23 +71,23 @@ bool test_cycle(biginteger iCycle)
 biginteger next_valid_cycle(biginteger i) //compute the next valid cycle
 {
 	//assume the actual cycle is valid
-	assert((i & 1) == 0);
-	assert(i & (i << 1) == 0); //simple & is intentionnal
+	assert((i & 1) == 0); // check end by pair
+	assert(i & (i << 1) == 0); //check every odd followed by even
 
-	i += 2;
+	i += 2; //cannot end by odd, so go to next odd finishing cycle
 
 	while(true)
 	{
-		biginteger u = i & (i << 1); //pos of next invalid odd odd combination
+		biginteger u = i & (i >> 1); //bitmask of next invalid odd combination
 		if (!u)
 			return i;
-		i = (i | (u - 1)) + 1; //magic
+		i += u; //magic, compute next possible cycle by adding a bit to the xxx1100 sequence
 	}
 
 	return -1; //impossible to be here
 }
 ////////////////////////////////////////////////////////////////////////////////
-// if is iSequence is a trivial cycle ("100100100...") or a new cycle 
+// test if iCycle is a trivial cycle ("100100100...") or a new cycle 
 bool is_trivial_cycle(biginteger iCycle)
 {
 	//remove all trivial cycle end as "xxyyxyxy100" to "xxyyxyxy"
@@ -98,12 +119,9 @@ void syracuse_test_cycle()
 	{
 		if (test_cycle(iCycle))
 		{
-			int iSize = msb_pos(iCycle)+1;
-
-			if (is_trivial_cycle(iCycle))
-				cout << "trivial cycle found=" << iCycle << " size=" << iSize << endl;
-			else
-				cout << "NONtrivial cycle found !!!!!! WOW  =" << iCycle << " size=" << iSize << endl;
+			string s = cycle_to_string(iCycle);
+			bool bIsTrivial = is_trivial_cycle(iCycle);
+			cout << "Cycle found !!!  =" << s << " size=" << s.size() << (bIsTrivial?"  trivial":"  !!! NOT TRIVIAL !!!") << endl ;
 		}
 	
 		iNbTestedCycles++;
