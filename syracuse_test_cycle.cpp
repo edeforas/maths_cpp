@@ -5,11 +5,17 @@
 #include "biginteger.h"
 using namespace std;
 
+// Test for possibles Syracuse cycles
+// cycles are encoded into a binary pattern in a long long int:
+// bit =1 => odd transformation, bit=0 => even transformation
+// cycles minimum start with a odd transformation, so with the first MSB=1
+// this implies also that cycles ends with LSB =0 (even)
+// also all cycles cannot contain xx11yy ( two odd following)
+
 ////////////////////////////////////////////////////////////////////////////////
 // convert the cycle to a string
 string cycle_to_string(biginteger i)
 {
-
 	if (i == 0)
 		return "p";
 
@@ -26,32 +32,27 @@ string cycle_to_string(biginteger i)
 	return s;
 }
 ////////////////////////////////////////////////////////////////////////////////
-//compute the size of the sequence, i.e. the pos of the msb
-int msb_pos(biginteger i)
+// keep only the msb bit
+biginteger keep_msb(biginteger i)
 {
 	if (i == 0)
 		return 0;
 
-	int iPos = 0;
-	while (i != 0)
-	{
-		i >>= 1;
-		iPos++;
-	}
-	return iPos-1;
+	biginteger iPos = 1;
+	while (iPos<=i)
+		iPos <<=1;
+	
+	return	iPos>>1;
 }
 ////////////////////////////////////////////////////////////////////////////////
-// test if iSequence is a valid cycle
+// test if iCycle is a valid cycle
 bool test_cycle(biginteger iCycle)
 {
-	if (iCycle & 1)
-		return 0; //since first msb is 1 by definition, the lsb cannot be 0 or we have 11 in the cycle
-	
-	if ((iCycle & (iCycle << 1)) != 0)
-		return 0; // two odd following: ( i.e. xx11yy bit), not possible
+	//assume the actual cycle is valid
+	assert((iCycle & 1) == 0); // check end by even
+	assert((iCycle & (iCycle >> 1)) == 0); //check every odd followed by even 
 
-	int msb = msb_pos(iCycle);
-	biginteger iMask = (1LL << msb);
+	biginteger iMask = keep_msb(iCycle);
 	biginteger a = 1, b = 1;
 
 	//test the sequence
@@ -65,14 +66,16 @@ bool test_cycle(biginteger iCycle)
 		iMask >>= 1;
 	}
 
-	return a == b; // test if a/b== 1 i.e. function is identity
+	// test if a/b== 1 i.e. function is identity
+	// test if cycle is not one even (valid with x=0, but in conjectures domain) 
+	return (a == b) && (iCycle!=0); 
 }
 ////////////////////////////////////////////////////////////////////////////////
 biginteger next_valid_cycle(biginteger i) //compute the next valid cycle
 {
 	//assume the actual cycle is valid
 	assert((i & 1) == 0); // check end by pair
-	assert(i & (i << 1) == 0); //check every odd followed by even
+	assert((i & (i >> 1)) == 0); //check every odd followed by even
 
 	i += 2; //cannot end by odd, so go to next odd finishing cycle
 
