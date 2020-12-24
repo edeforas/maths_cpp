@@ -38,11 +38,18 @@ biginteger keep_msb(biginteger i)
 	if (i == 0)
 		return 0;
 
-	biginteger iPos = 1;
-	while (iPos<=i)
-		iPos <<=1;
-	
-	return	iPos>>1;
+	biginteger msb=i >>1;
+	biginteger oldmsb = 0;
+	int n = 1;
+
+	while (oldmsb != msb) //early abort
+	{
+		oldmsb = msb;
+		msb |= (msb >> n); //back propagate msb using blocks of increasing size
+		n *= 2;
+	}
+
+	return msb  + 1;
 }
 ////////////////////////////////////////////////////////////////////////////////
 // test if iCycle is a valid cycle
