@@ -7,5 +7,6 @@
 
 bool is_odd(const biginteger& i);
 bool is_even(const biginteger& i);
+biginteger keep_msb(biginteger i);
 
 #endif

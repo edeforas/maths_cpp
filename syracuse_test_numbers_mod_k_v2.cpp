@@ -8,7 +8,7 @@ using namespace std;
 
 #include "syracuse_test_numbers_mod_k_v2.h"
 #include "biginteger.h"
-
+///////////////////////////////////////////////////////////////////////////////////////////
 bool test_iterate(biginteger b, biginteger k)
 {
 	biginteger newk = k;
