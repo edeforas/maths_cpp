@@ -1,4 +1,4 @@
-//this is a  test for syracuse number mod k
+//this is a test for syracuse number mod k optimized
 
 #ifndef syracuse_test_numbers_mod_k_
 #define syracuse_test_numbers_mod_k_

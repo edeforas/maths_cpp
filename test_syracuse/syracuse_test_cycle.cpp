@@ -17,7 +17,7 @@ using namespace std;
 string cycle_to_string(biginteger i)
 {
 	if (i == 0)
-		return "p";
+		return "p"; // valid if x==0 but Syracuse start with 1
 
 	string s;
 	while (i != 0)
@@ -54,7 +54,7 @@ bool test_cycle(biginteger iCycle)
 	}
 
 	// test if a/b== 1 i.e. function is identity
-	// test if cycle is not one even (valid with x=0, but in conjectures domain) 
+	// test if cycle is not one even (valid with x=0, but in Syracuse definition) 
 	return (a == b) && (iCycle!=0); 
 }
 ////////////////////////////////////////////////////////////////////////////////
@@ -87,15 +87,15 @@ bool is_trivial_cycle(biginteger iCycle)
 		if (trivial == 4) //4 means 0x100, so odd,even,even = trivial cycle
 			iCycle >>= 3; //discard the trivial cycle
 		else
-			return false; //no a trivial cycle ! !!! WOW
+			return false; //not a trivial cycle ! !!! WOW
 	}
-	return true; //all trivial removed
+	return true; //all trivial cycle removed
 }
 ////////////////////////////////////////////////////////////////////////////////
 void syracuse_test_cycle()
 {
-	cout << "test all cycle with size =1 to 40" << endl;
-	cout << "compute the global affine function and test if a integer is the solution" << endl;
+	cout << "test all cycle with size = 1 to 40" << endl;
+	// compute the global affine function and test if a integer is the solution
 
 	//use the bitmask iSequence
 	//even is bit=0
@@ -111,7 +111,7 @@ void syracuse_test_cycle()
 		{
 			string s = cycle_to_string(iCycle);
 			bool bIsTrivial = is_trivial_cycle(iCycle);
-			cout << "Cycle found !!!  =" << s << " size=" << s.size() << (bIsTrivial?"  trivial":"  !!! NOT TRIVIAL !!!") << endl ;
+			cout << "Cycle found !!!  =" << s << " size=" << s.size() << (bIsTrivial?" but is trivial":"  !!! NOT TRIVIAL !!!") << endl ;
 		}
 	
 		iNbTestedCycles++;

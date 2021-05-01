@@ -1,7 +1,8 @@
-//this is a simple test for syracuse number
-//test all number under 10e9
-// optimisation: for every values, early abort if lower than start (already tested previously)
-// test every numbers, for even number, or 4n+x, early abort immediately
+// Simple test for syracuse number
+// test all number under 1e9
+// small optimisation: 
+//     for every values, early abort if lower than start (already tested previously)
+//     (the start number is not a cycle minimum)
 
 #include <iostream>
 using namespace std;
@@ -34,7 +35,7 @@ void syracuse_test_numbers()
 	// test with i<N
 	for (biginteger i = 1; i < N; i++)
 	{
-		if ((i % 1'000'000)==0)
+		if ((i % 10'000'000)==0)
 			cout << i << endl;
 		 
 		biginteger iMaxFly =N;
