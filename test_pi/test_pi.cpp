@@ -6,11 +6,11 @@ using namespace std;
 //////////////////////////////////////////////////////////////////////////////
 void random_sieve()
 {
-    cout << "method: random_sieve ( disp every 1000)" << endl;
+    cout << "method: random_sieve ( disp every 100000)" << endl;
     int iCircle=0;
     int iSquare=0;
 
-    for (int i=0;i<100000;i++)
+    for (int i=0;i<10000000;i++)
     {
         double dx=rand()/(double)RAND_MAX;
         double dy=rand()/(double)RAND_MAX;
@@ -19,37 +19,16 @@ void random_sieve()
         if (dx*dx+dy*dy<1.)
             iCircle++;
 
-        if (i%1000==0)
+        if (i%100000==0)
         {
-            cout << setprecision(15) << i/1000 << " : " << 4.*iCircle/iSquare << endl;
+            cout << setprecision(15) << i/100000 << " : " << 4.*iCircle/iSquare << endl;
         }
     }
 }
 //////////////////////////////////////////////////////////////////////////////
-void euler_1()
+void euler()
 {
-    cout << "method: euler_1" << endl;
-    double s=1.;
-    for (int i=1;i<50;i++)
-    {
-        double a=1.;
-        double b=1.;
-
-        for (int j=1;j<=i;j++)
-        {
-            a=a*j;
-            b=b*(2*j+1);
-        }
-
-        s+=a/b;
-
-        cout << setprecision(15) << i << " : " << 2.*s << endl;
-    }
-}
-//////////////////////////////////////////////////////////////////////////////
-void euler_2()
-{
-    cout << "method: euler_2" << endl;
+    cout << "method: euler" << endl;
     double s=1.;
     double a=1.;
     double b=1.;
@@ -64,8 +43,8 @@ void euler_2()
     }
 }
 //////////////////////////////////////////////////////////////////////////////
-//from "Le merveilleux nombre PI"
-void compte_goutte_1()
+//from the book "Le merveilleux nombre PI" J.P. Delahaye
+void compte_goutte()
 {
     int a=10000,b=0,c=8400,d,e=0,f[8401],g;
     for ( ;b-c ;)
@@ -75,35 +54,26 @@ void compte_goutte_1()
         ;
 }
 //////////////////////////////////////////////////////////////////////////////
-//from "Le merveilleux nombre PI"
-void compte_goutte_2() //WIP
+void archimed()
 {
-    int a=10000,b=0,c=8400,e=0,f[8401],g;
-
-    while (b!=c)
-        f[b++]=a/5;
-
-    for (c=8400;c>0;c-=14)
+    cout << "method: archimed" << endl;
+    double x = 0. , d ;
+    double factor2 = 2.;
+    for (int i = 0; i < 20; i++)
     {
-        g=c*2;
-        int d=0;
-        b=c;
+        x = sqrt((1.+x)*0.5);
+        d = 2.*factor2*sqrt(2. - 2. * x);
+        cout << setprecision(15) << i << " : " << d << endl;
 
-        for ( ;d+=f[b]*a,f[b]=d%--g,d/=g--,--b; )
-            d*=b;
-
-        printf("%.4d",e+d/a);
-        e=d%a;
+        factor2 = factor2 * 2.;
     }
 }
 //////////////////////////////////////////////////////////////////////////////
-
 int main()
 {
     //random_sieve();
-    //euler_1();
-    euler_2();
-    //compte_goutte_1();
-    //compte_goutte_2();
+    //euler();
+    //compte_goutte();
+    archimed();
     return 0;
 }
