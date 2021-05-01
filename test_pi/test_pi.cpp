@@ -54,12 +54,12 @@ void compte_goutte()
         ;
 }
 //////////////////////////////////////////////////////////////////////////////
-void archimed()
+void polygon()
 {
-    cout << "method: archimed" << endl;
+    cout << "method: polygon" << endl;
     double x = 0. , d ;
     double factor2 = 2.;
-    for (int i = 0; i < 20; i++)
+    for (int i = 0; i < 10; i++)
     {
         x = sqrt((1.+x)*0.5);
         d = 2.*factor2*sqrt(2. - 2. * x);
@@ -74,6 +74,6 @@ int main()
     //random_sieve();
     //euler();
     //compte_goutte();
-    archimed();
+    polygon();
     return 0;
 }
