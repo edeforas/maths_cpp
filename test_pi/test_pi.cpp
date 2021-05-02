@@ -36,7 +36,7 @@ void euler()
     for (int i=1;i<50;i++)
     {
         a=a*i;
-        b=b*(2*i+1);
+        b=b*(2*i+1.);
         s+=a/b;
 
         cout << setprecision(15) << i << " : " << 2.*s << endl;
@@ -57,15 +57,17 @@ void compte_goutte()
 void polygon()
 {
     cout << "method: polygon" << endl;
-    double x = 0. , d ;
+    double u,v , d =sqrt(2.);
     double factor2 = 2.;
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 50; i++)
     {
-        x = sqrt((1.+x)*0.5);
-        d = 2.*factor2*sqrt(2. - 2. * x);
-        cout << setprecision(15) << i << " : " << d << endl;
-
+        u = d * d / 4.;
+        v = 1. - sqrt(1. - u);
+        d = sqrt(u + v*v);
         factor2 = factor2 * 2.;
+         
+        cout << setprecision(15) << i << " : " << d*factor2 << endl;
+
     }
 }
 //////////////////////////////////////////////////////////////////////////////
