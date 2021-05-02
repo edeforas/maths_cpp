@@ -56,9 +56,10 @@ void compte_goutte()
 //////////////////////////////////////////////////////////////////////////////
 void polygon()
 {
+    // d is the inner polygon edge size (start with a diameter)
     cout << "method: polygon" << endl;
-    double u,v , d =sqrt(2.);
-    double factor2 = 2.;
+    double u, v, d =2.;
+    double factor2 = 1.;
     for (int i = 0; i < 50; i++)
     {
         u = d * d / 4.;
@@ -67,7 +68,6 @@ void polygon()
         factor2 = factor2 * 2.;
          
         cout << setprecision(15) << i << " : " << d*factor2 << endl;
-
     }
 }
 //////////////////////////////////////////////////////////////////////////////
