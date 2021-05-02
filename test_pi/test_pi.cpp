@@ -1,13 +1,14 @@
 #include <iostream>
 #include <cstdlib>
 #include <iomanip>
-#include <stdio.h>
+#include <cstdio>
 using namespace std;
+
 //////////////////////////////////////////////////////////////////////////////
 void random_sieve()
 {
     cout << "method: random_sieve ( disp every 100000)" << endl;
-    int iCircle=0;
+    int iInCircle=0;
     int iSquare=0;
 
     for (int i=0;i<10000000;i++)
@@ -17,11 +18,11 @@ void random_sieve()
 
         iSquare++;
         if (dx*dx+dy*dy<1.)
-            iCircle++;
+            iInCircle++;
 
         if (i%100000==0)
         {
-            cout << setprecision(15) << i/100000 << " : " << 4.*iCircle/iSquare << endl;
+            cout << setprecision(15) << i/100000 << " : " << 4.*iInCircle/iSquare << endl;
         }
     }
 }
@@ -56,18 +57,20 @@ void compte_goutte()
 //////////////////////////////////////////////////////////////////////////////
 void polygon()
 {
-    // d is the inner polygon edge size (start with a diameter)
+    // d is the inner polygon edge size (start with a diameter =2.)
+    //split the edge in two parts, move middle point to circle, recompute half edge size
+    
     cout << "method: polygon" << endl;
     double u, v, d =2.;
-    double factor2 = 1.;
+    double nb_edge = 1.;
     for (int i = 0; i < 50; i++)
     {
         u = d * d / 4.;
         v = 1. - sqrt(1. - u);
         d = sqrt(u + v*v);
-        factor2 = factor2 * 2.;
+        nb_edge = nb_edge * 2.;
          
-        cout << setprecision(15) << i << " : " << d*factor2 << endl;
+        cout << setprecision(15) << i << " : " << d* nb_edge << endl;
     }
 }
 //////////////////////////////////////////////////////////////////////////////
