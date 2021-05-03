@@ -46,7 +46,6 @@ int main()
     for(int i=1;i<100;i++)
         cout << "i=" << i << " is_prime_trivial=" << is_prime_trivial(i) << endl;
 
-
     for (int i=1;i<14;i++)
         if (is_odd(i))
             if (is_prime_trivial(i))
