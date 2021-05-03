@@ -3,13 +3,13 @@
 #include <cmath>
 using namespace std;
 
-
 /////////////////////////////////////////////////////////////////////
 double sqrt_wolfram(double a)
 {
     double u=a/64.; //to keep 1<=u<4
     double v=0.;
     int N=16;
+    double dfactor = 8. / (1LL << (N + 1));
 
     for(int i=0;i<N;i++)
     {
@@ -25,7 +25,7 @@ double sqrt_wolfram(double a)
         }
     }
 
-    return (v/(double)(1<<(N+1)))*8.; //10=sqrt(100)
+    return v * dfactor;
 }
 /////////////////////////////////////////////////////////////////////
 double sqrt_bhaskara_brouncker(double a)
@@ -69,7 +69,7 @@ double sqrt_mathpath(double a)
     return x;
 }
 /////////////////////////////////////////////////////////////////////
-unsigned int sqrt_int_approx(unsigned int a) //1ere approx +2 cycles de newton
+unsigned int sqrt_int_approx(unsigned int a) //1 approx + 2 newton cycles
 {
     unsigned int r,v=a;
     unsigned int shift;
@@ -87,138 +87,13 @@ unsigned int sqrt_int_approx(unsigned int a) //1ere approx +2 cycles de newton
     r |= shift;
     r |= (v >> 1);
 
-    r= 1 << (r >> 1); //essayer r= a >> ( r >> 1 );
-
+    r= 1 << (r >> 1);
     r=(r+a/r)>>1;
     r=(r+a/r)>>1;
 
     return r;
 }
-/////////////////////////////////////////////////////////////////////
-int my_sqrt_pre1(int x) //edf
-{
-    int e= 1;
 
-    while ( (e*e << 2) < x)
-        e <<= 1;
-
-    //    cout << "x=" << x << " e=" << e << endl;
-
-
-    int refine=e >> 1;
-    while (refine != 0)
-    {
-        //        cout << "e=" << e << " refine=" << refine << endl;
-
-        if( (e+refine)*(e+refine)<=x)
-            e=e+refine;
-
-        refine>>=1;
-    }
-
-    return e;
-}
-/////////////////////////////////////////////////////////////////////
-int my_sqrt_pre2(int x)  //edf
-{
-    int e= 1;
-
-    while ( (e*e << 2) < x)
-        e <<= 1;
-
-    //    cout << "x=" << x << " e=" << e << endl;
-
-    int refine=e >> 1;
-    int refine2=refine*refine;
-    int e2=e*e;
-    while (refine != 0)
-    {
-        //        cout << "e=" << e << " refine=" << refine << endl;
-
-        int c=2*e*refine;
-
-        if( (e2+refine2+c)<=x)
-        {
-            e=e+refine;
-            e2=e*e;
-        }
-
-        refine2>>=2;
-        refine>>=1;
-    }
-
-    return e;
-}
-/////////////////////////////////////////////////////////////////////
-int my_sqrt_pre3(int x)  //edf
-{
-    int e= 1,e2=1;
-
-    while ( (e*e << 2) < x)
-    {
-        e<<=1;
-        e2<<=2;
-    }
-    //    cout << "x=" << x << " e=" << e << " e2=" << e2 << endl;
-
-    int refine=e >> 1;
-    int refine2=e2 >> 2;
-    int c=e2;
-
-    while (refine != 0)
-    {
-        //        cout << "e=" << e << " e2=" << e2 << " refine=" << refine << " c=" << c <<endl;
-
-        if( (e2+refine2+c)<=x)
-        {
-            e2+=c+refine2;
-            c=e*refine+refine2;
-            e=e+refine;
-        }
-        else
-            c=c>>1;
-
-        refine2>>=2;
-        refine>>=1;
-    }
-
-    return e;
-}
-/////////////////////////////////////////////////////////////////////
-int my_sqrt_pre4(int x)  //edf
-{
-    int e= 1,e2=1;
-
-    while ( (e2 << 2) < x)
-    {
-        e<<=1;
-        e2<<=2;
-    }
-    //cout << "x=" << x << " e=" << e << " e2=" << e2 << endl;
-
-    int refine=e >> 1;
-    int refine2=e2 >> 2;
-    int c=e2;
-
-    while (refine != 0)
-    {
-        //cout << "e=" << e << " e2=" << e2 << " refine=" << refine << " c=" << c <<endl;
-
-        int e3=e2+refine2+c;
-        c>>=1;
-        if(e3<=x)
-        {
-            e2=e3;
-            c+=refine2;
-            e=e+refine;
-        }
-
-        refine2>>=2;
-        refine>>=1;
-    }
-
-    return e;
-}
 /////////////////////////////////////////////////////////////////////
 //	Square root by abacus algorithm, Martin Guy @ UKC, June 1985.From a book on programming abaci by Mr C. Woo.
 //	Argument is a positive integer, as is result.
@@ -236,8 +111,6 @@ int sqrt_abacus(int x)
 
     while (one != 0)
     {
-        //        cout << "op=" << op << " res=" << res << " one=" << one << endl;
-
         if (op >= res + one)
         {
             op = op - (res + one);
@@ -295,10 +168,8 @@ double sqrt_newton_div(double a)
     double u=a;
 
     for (int i=0;i<10;i++) //why 10?
-    {
         u=1/2.*(u+a/u);
-        //        cout << i << "\t" << u <<endl;
-    }
+
     return u;
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -307,10 +178,8 @@ double inv_sqrt_newton_mult(double a)
     double v=1./a;
 
     for (int i=0;i<10;i++) //why 10?
-    {
         v=v*0.5*(3.-a*v*v);
-        //        cout << i << "\t" << a*v <<endl;
-    }
+
     return v*a;
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -333,10 +202,6 @@ int main()
     cout << "sqrt_wolfram:" << sqrt_wolfram((float)a) << endl;
 
     cout << "abacus:" << sqrt_abacus((int)a) << endl;
-    cout << "mysqrt_pre1:" << my_sqrt_pre1((int)a) << endl;
-    cout << "mysqrt_pre2:" << my_sqrt_pre2((int)a) << endl;
-    cout << "mysqrt_pre3:" << my_sqrt_pre3((int)a) << endl;
-    cout << "mysqrt_pre4:" << my_sqrt_pre4((int)a) << endl;
     cout << "sqrt_int_approx:" << sqrt_int_approx((int)a) << endl;
 
     return 0;
