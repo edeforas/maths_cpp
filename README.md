@@ -6,5 +6,6 @@ This is a collection of maths c++ code, mostly in public domain, I also added my
 - test_butterworth: generate and apply low-pass, band-pass and high-pass filter from relative frequency definition
 - test_Mersenne_prime: generate Mersenne primes numbers
 - test_syracuse: 3 algorithms to compute cycles or syracuse numbers and search for new possible cycles
+- test_polygon_area: compute the 2D polygon signed area using the Shoelace algorithm
 
 Feel free to add your own.
