@@ -3,6 +3,35 @@
 #include <cmath>
 using namespace std;
 
+///////////////////////////////////////////////////////////////////////////////
+float fast_sqrt_init(float val)
+{
+    union
+    {
+        int tmp;
+        float val;
+    } u;
+    u.val = val;
+    u.tmp -= 1 << 23; // Remove last bit so 1.0 gives 1.0
+    // tmp is now an approximation to logbase2(val)
+    u.tmp >>= 1; // divide by 2
+    u.tmp += 1 << 29; // add 64 to exponent: (e+127)/2 =(e/2)+63,
+    // that represents (e/2)-64 but we want e/2
+    return u.val;
+}
+///////////////////////////////////////////////////////////////////////////////
+float fast_invsqrt_init(float x)
+{
+    //first part of invsqrt_quake3
+    union
+    {
+        float x;
+        int i;
+    } u;
+    u.x = x;
+    u.i = 0x5f3759df - (u.i >> 1);
+    return u.x;
+}
 /////////////////////////////////////////////////////////////////////
 double sqrt_wolfram(double a)
 {
@@ -30,8 +59,8 @@ double sqrt_wolfram(double a)
 /////////////////////////////////////////////////////////////////////
 double sqrt_bhaskara_brouncker(double a)
 {
-    double x=1.;
-    double y=1.;
+    double x = fast_sqrt_init(a);
+    double y= 1;
 
     for(int i=0;i<30;i++)
     {
@@ -63,15 +92,17 @@ double sqrt_wilkes(double a)
 /////////////////////////////////////////////////////////////////////
 double sqrt_mathpath(double a)
 {
-    double x=1.;
-    for(int i=0;i<70;i++)
+    double x =  fast_sqrt_init(a);
+    for(int i=0;i<20;i++)
         x=(x+a)/(x+1.);
 
     return x;
 }
 /////////////////////////////////////////////////////////////////////
-unsigned int sqrt_int_approx(unsigned int a) //1 approx + 2 newton cycles
+unsigned int sqrt_int_approx(unsigned int a)
 {
+    // author is Etienne de Foras, 
+    // mix of a bit count algorithm using SWAR and two Newton cycles
     unsigned int r,v=a;
     unsigned int shift;
 
@@ -94,7 +125,6 @@ unsigned int sqrt_int_approx(unsigned int a) //1 approx + 2 newton cycles
 
     return r;
 }
-
 /////////////////////////////////////////////////////////////////////
 //	Square root by abacus algorithm, Martin Guy @ UKC, June 1985.From a book on programming abaci by Mr C. Woo.
 //	Argument is a positive integer, as is result. formally proved that on exit:
@@ -106,7 +136,8 @@ int sqrt_abacus(int x)
     int op=x, res=0, one= 1 << 30; // second-to-top bit set
 
     // "one" starts at the highest power of four <= than the argument.
-    while (one > op) one >>= 2;
+    while (one > op) 
+        one >>= 2;
 
     while (one != 0)
     {
@@ -123,7 +154,6 @@ int sqrt_abacus(int x)
 ///////////////////////////////////////////////////////////////////////////////
 float invsqrt_quake3(float x)
 {
-    float xhalf = 0.5f*x;
     union
     {
         float x;
@@ -131,23 +161,10 @@ float invsqrt_quake3(float x)
     } u;
     u.x = x;
     u.i = 0x5f3759df - (u.i >> 1);
-    x = u.x * (1.5f - xhalf * u.x * u.x);
+    x = u.x * (1.5f - 0.5f*x * u.x * u.x);
     return x;
 }
-///////////////////////////////////////////////////////////////////////////////
-float fast_invsqrt_init(float x)
-{
-    //first part of invsqrt_quake3
-    float xhalf = 0.5f * x;
-    union
-    {
-        float x;
-        int i;
-    } u;
-    u.x = x;
-    u.i = 0x5f3759df - (u.i >> 1);
-    return u.x;
-}
+
 ///////////////////////////////////////////////////////////////////////////////
 float goldschmidt_invsqrt(float x)
 {
@@ -156,38 +173,23 @@ float goldschmidt_invsqrt(float x)
     float xn = y0 * x;
     float hn = y0 * 0.5f;
 
-    for (int i = 0; i < 30; i++)
+    for (int i = 0; i < 3; i++)
     {
         float rn = 0.5f - xn * hn;
-        xn = xn + xn * rn; //FMA
-        hn = hn + hn * rn; //FMA
+        xn = xn + xn * rn; //FMA can be simplified using rn=rn+1 and factorized
+        hn = hn + hn * rn;
     }
 
-    //return xn; converge also to sqrt(x) 
-    return 2.f * hn; // converge to invsqrt(x)
+    //return xn; // xn converge to sqrt(x) 
+    return 2.f * hn; // yn converge to invsqrt(x)
 }
-///////////////////////////////////////////////////////////////////////////////
-float fast_sqrt_init(float val)
-{
-    union
-    {
-        int tmp;
-        float val;
-    } u;
-    u.val = val;
-    u.tmp -= 1<<23; // Remove last bit so 1.0 gives 1.0
-    // tmp is now an approximation to logbase2(val)
-    u.tmp >>= 1; // divide by 2
-    u.tmp += 1<<29; // add 64 to exponent: (e+127)/2 =(e/2)+63,
-    // that represents (e/2)-64 but we want e/2
-    return u.val;
-}
+
 ///////////////////////////////////////////////////////////////////////////////
 double sqrt_halley(double a)
 {
-    double u=a;
+    double u= fast_sqrt_init(a);
 
-    for (int i=0;i<10;i++) //why 10?
+    for (int i=0;i<3;i++)
     {
         u=u*(u*u+3.*a)/(3.*u*u+a);
     }
@@ -196,9 +198,9 @@ double sqrt_halley(double a)
 ///////////////////////////////////////////////////////////////////////////////
 double sqrt_newton_div(double a)
 {
-    double u=a;
+    double u= fast_sqrt_init(a);
 
-    for (int i=0;i<10;i++) //why 10?
+    for (int i=0;i<3;i++)
         u=1/2.*(u+a/u);
 
     return u;
@@ -206,9 +208,9 @@ double sqrt_newton_div(double a)
 ///////////////////////////////////////////////////////////////////////////////
 double inv_sqrt_newton_mult(double a)
 {
-    double v=1./a;
+    double v= fast_invsqrt_init(a);
 
-    for (int i=0;i<10;i++) //why 10?
+    for (int i=0;i<3;i++)
         v=v*0.5*(3.-a*v*v);
 
     return v*a;
@@ -220,23 +222,22 @@ int main()
 
     cout << "a=" << a << " ref_sqrt=" << sqrt(a) << endl << endl;
 
-    cout << "sqrt_math.h:" << sqrt(a) << endl;
+    cout << "fast_sqrt_init:" << fast_sqrt_init((float)a) << endl;
+    cout << "fast_invsqrt_init:" << a * fast_invsqrt_init((float)a) << endl <<endl;
 
     cout << "sqrt_newton_div:" << sqrt_newton_div(a) << endl;
     cout << "sqrt_halley:" << sqrt_halley(a) << endl;
     cout << "sqrt_wilkes:" << sqrt_wilkes(a) << endl;
     cout << "sqrt_mathpath:" << sqrt_mathpath((float)a) << endl;
     cout << "sqrt_bhaskara_brouncker:" << sqrt_bhaskara_brouncker(a) << endl;
+    cout << "sqrt_wolfram:" << sqrt_wolfram((float)a) << endl <<endl;
+
     cout << "a*inv_sqrt_newton_mult:" << inv_sqrt_newton_mult(a) << endl;
-
-    cout << "fast_sqrt_init:" << fast_sqrt_init((float)a) << endl;
-    cout << "fast_invsqrt_init:" << a*fast_invsqrt_init((float)a) << endl;
     cout << "a*invsqrt_quake3:" << a*invsqrt_quake3((float)a) << endl;
-    cout << "a*goldschmidt_invsqrt:" << a * goldschmidt_invsqrt((float)a) << endl;
-    cout << "sqrt_wolfram:" << sqrt_wolfram((float)a) << endl;
+    cout << "a*goldschmidt_invsqrt:" << a * goldschmidt_invsqrt((float)a) << endl <<endl;
 
-    cout << "abacus:" << sqrt_abacus((int)a) << endl;
     cout << "sqrt_int_approx:" << sqrt_int_approx((int)a) << endl;
+    cout << "abacus:" << sqrt_abacus((int)a) << endl;
 
     return 0;
 }

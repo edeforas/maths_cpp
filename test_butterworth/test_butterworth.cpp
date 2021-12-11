@@ -42,7 +42,7 @@ typedef double Memory_Coef[2][MAX_ORDER_TAB];
 *        D........: Table updated after the call to Filter procedure  *
 *        Xs.......: current value of filtered signal (REAL)           *
 * ------------------------------------------------------------------- *
-* Rfrence                                                           *
+* Reference                                                           *
 * ---------                                                           *
 *  "Lawrence R.Rabiner et Bernard Gold                                *
 *   Theory and application of digital processing.                     *
@@ -96,7 +96,7 @@ void Init(double Xdc, Filter_Coef C, int NSections, Memory_Coef D)
     dc=Xdc;
     for (j=0; j<NSections; j++)
     {
-        D[1][j]=dc/(1-C[0][j]-C[1][j]);
+        D[1][j]=dc/(1.-C[0][j]-C[1][j]);
         D[0][j]=D[1][j];
         Csum=0.;
         for (i=0; i<4; i++)
@@ -128,7 +128,7 @@ void Init(double Xdc, Filter_Coef C, int NSections, Memory_Coef D)
 *********************************************************************/
 void Butterworth(double Fc,double Ts,int iOrder,Filter_Coef C,int *NSections, double *Tg )
 {
-    int Ns2,i,Modn;
+    int Ns2,Modn;
     double Arg,Rep,Omega,OmegaSq,temp,W0,W1,m;
 
     for (int i=0; i<MAX_ORDER_TAB; i++)
@@ -158,7 +158,7 @@ void Butterworth(double Fc,double Ts,int iOrder,Filter_Coef C,int *NSections, do
     *NSections=Ns2+Modn;
     *Tg=0.;
     if (iOrder>1)
-        for (i=0; i<Ns2; i++)
+        for (int i=0; i<Ns2; i++)
         {
             Rep=Omega*cos(PI *(i+1-temp)/iOrder);
             *Tg=*Tg+Ts*Rep/OmegaSq;
