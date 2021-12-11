@@ -45,7 +45,8 @@ double sqrt_bhaskara_brouncker(double a)
 /////////////////////////////////////////////////////////////////////
 double sqrt_wilkes(double a)
 {
-    a=a/100.; //must have 0<a<3
+    double pre_factor = 10.;
+    a=a/(pre_factor* pre_factor); //must have 0<a<3
 
     //cf http://en.wikipedia.org/wiki/Methods_of_computing_square_roots
     double a0=a;
@@ -57,7 +58,7 @@ double sqrt_wilkes(double a)
         c0=c0*c0*(c0-3.)/4.;
     }
 
-    return a0*10.;
+    return a0 * pre_factor;
 }
 /////////////////////////////////////////////////////////////////////
 double sqrt_mathpath(double a)
@@ -96,10 +97,8 @@ unsigned int sqrt_int_approx(unsigned int a) //1 approx + 2 newton cycles
 
 /////////////////////////////////////////////////////////////////////
 //	Square root by abacus algorithm, Martin Guy @ UKC, June 1985.From a book on programming abaci by Mr C. Woo.
-//	Argument is a positive integer, as is result.
-//	I have formally proved that on exit:
-//		   2		   2		   2
-//		res  <= x < (res+1)	and	res  + op == x
+//	Argument is a positive integer, as is result. formally proved that on exit:
+//		   2		   2		   2		res  <= x < (res+1)	and	res  + op == x
 //	This is also nine times faster than the library routine (-lm).
 int sqrt_abacus(int x)
 {
@@ -122,7 +121,7 @@ int sqrt_abacus(int x)
     return res;
 }
 ///////////////////////////////////////////////////////////////////////////////
-float invSqrt_quake3(float x)
+float invsqrt_quake3(float x)
 {
     float xhalf = 0.5f*x;
     union
@@ -136,7 +135,39 @@ float invSqrt_quake3(float x)
     return x;
 }
 ///////////////////////////////////////////////////////////////////////////////
-float fastsqrt_init(float val)
+float fast_invsqrt_init(float x)
+{
+    //first part of invsqrt_quake3
+    float xhalf = 0.5f * x;
+    union
+    {
+        float x;
+        int i;
+    } u;
+    u.x = x;
+    u.i = 0x5f3759df - (u.i >> 1);
+    return u.x;
+}
+///////////////////////////////////////////////////////////////////////////////
+float goldschmidt_invsqrt(float x)
+{
+    // from https://en.wikipedia.org/wiki/Methods_of_computing_square_roots
+    float y0 = fast_invsqrt_init(x);
+    float xn = y0 * x;
+    float hn = y0 * 0.5f;
+
+    for (int i = 0; i < 30; i++)
+    {
+        float rn = 0.5f - xn * hn;
+        xn = xn + xn * rn; //FMA
+        hn = hn + hn * rn; //FMA
+    }
+
+    //return xn; converge also to sqrt(x) 
+    return 2.f * hn; // converge to invsqrt(x)
+}
+///////////////////////////////////////////////////////////////////////////////
+float fast_sqrt_init(float val)
 {
     union
     {
@@ -187,6 +218,8 @@ int main()
 {
     double a=100.;
 
+    cout << "a=" << a << " ref_sqrt=" << sqrt(a) << endl << endl;
+
     cout << "sqrt_math.h:" << sqrt(a) << endl;
 
     cout << "sqrt_newton_div:" << sqrt_newton_div(a) << endl;
@@ -196,9 +229,10 @@ int main()
     cout << "sqrt_bhaskara_brouncker:" << sqrt_bhaskara_brouncker(a) << endl;
     cout << "a*inv_sqrt_newton_mult:" << inv_sqrt_newton_mult(a) << endl;
 
-    cout << "fastsqrt_init:" << fastsqrt_init((float)a) << endl;
-    cout << "a*invSqrt_quake3:" << a*invSqrt_quake3((float)a) << endl;
-
+    cout << "fast_sqrt_init:" << fast_sqrt_init((float)a) << endl;
+    cout << "fast_invsqrt_init:" << a*fast_invsqrt_init((float)a) << endl;
+    cout << "a*invsqrt_quake3:" << a*invsqrt_quake3((float)a) << endl;
+    cout << "a*goldschmidt_invsqrt:" << a * goldschmidt_invsqrt((float)a) << endl;
     cout << "sqrt_wolfram:" << sqrt_wolfram((float)a) << endl;
 
     cout << "abacus:" << sqrt_abacus((int)a) << endl;
