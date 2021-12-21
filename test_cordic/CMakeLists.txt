@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.9)
+cmake_minimum_required(VERSION 3.0.0)
 
 project (test_cordic_alternate)
 add_executable(test_cordic_alternate test_cordic_alternate.cpp)
