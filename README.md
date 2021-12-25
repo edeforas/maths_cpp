@@ -1,3 +1,5 @@
+## Math_cpp
+
 This is a collection of maths c++ code, mostly in public domain, I also added my algorithms. They should compile without warnings and run under any C++ compiler. CMake files included.
 
 - test_cordic: several Cordic algorithms, direct , alternate, linear, circular, hyperbolic
