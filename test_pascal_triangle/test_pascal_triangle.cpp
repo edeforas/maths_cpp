@@ -6,15 +6,24 @@
 #include <vector>
 using namespace std;
 
-void first_line(vector<int>& line)
-{
+void compute_first_line(vector<int>& line)
+{	// init to [ 1 0 0 ...]
 	line[0] = 1;
 	for (int i = 1; i < line.size(); i++)
 		line[i] = 0;
 }
 
-void next_line(vector<int>& line)
-{
+void compute_line(vector<int>& line,int iLine)
+{   // if we assume the first col is 1: we can compute all the line
+	line[0] = 1;
+	for (int p= 1; p < line.size(); p++)
+	{
+		line[p] = line[p - 1] * (iLine + 1 - p) / (p );
+	}
+}
+
+void compute_next_line(vector<int>& line)
+{   // if we assume the first col is 1: we can compute next line
 	int a = 1, b;
 	for (int i = 1; i < line.size(); i++)
 	{
@@ -24,36 +33,82 @@ void next_line(vector<int>& line)
 	}
 }
 
-void draw(int iMax)
+void compute_prev_line(vector<int>& line)
+{   // if we assume the first col is 1: we can compute prev line
+	int a = 1;
+	for (int i = 1; i < line.size(); i++)
+	{
+		a = line[i]-a;
+		line[i]=a;
+	}
+}
+
+void print_line(vector<int>& line)
 {
-	cout << "1/ print a small pascal triangle:" << endl;
+	// print the line before the first diagonal
+	for (int i = 0; i < line.size(); i++)
+		cout << setw(5) << line[i];
+	cout << endl;
+}
+
+void draw_triangle(int iMax)
+{
+	cout << "Print a small pascal triangle:" << endl;
 
 	// create first line
 	vector<int> line(iMax);
-	first_line(line);
+	compute_first_line(line);
 
 	for(int l =1;l<iMax;l++)
 	{
-		// print the line before the first diagonal
-		for (int i = 0; i < l; i++)
-			cout << setw(5) << line[i];
-		cout << endl;
-
-		next_line(line);
+		print_line(line);
+		compute_next_line(line);
 	}			
+}
+
+void draw_triangle_compute_each_line(int iMax)
+{
+	cout << "Print a small pascal triangle, compute each line:" << endl;
+
+	vector<int> line(iMax);
+
+	for (int l = 0; l < iMax; l++)
+	{
+		print_line(line);
+		compute_line(line,l);
+	}
+}
+
+void draw_triangle_negative(int iMax)
+{
+	cout << "Print the negative part using the reccurence equation in reverse (1st solution):" << endl;
+
+	// create first line
+	vector<int> line(iMax);
+	compute_first_line(line);
+
+	// go to the minimum (negative part)
+	for (int l = 0; l >= -iMax; l--)
+		compute_prev_line(line);
+
+	for (int l = -iMax; l < iMax; l++)
+	{
+		print_line(line);
+		compute_next_line(line);
+	}
 }
 
 void draw_shierpinsky(int iMax)
 {
-	cout << endl << "2/ print a pascal triangle using number parity, show the Shierpinsky fractal:" << endl;
+	cout << endl << "Print a pascal triangle using number parity, show the Shierpinsky fractal:" << endl;
 
 	// create first line
 	vector<int> line(iMax);
-	first_line(line);
+	compute_first_line(line);
 
 	for (int l = 1; l < iMax; l++)
 	{
-		// print the line before the first diagonal
+		// print the line before the first diagonal, parity only
 		for (int i = 0; i < l; i++)
 			if ( (line[i] % 2) == 0)
 				cout << " ";
@@ -62,7 +117,7 @@ void draw_shierpinsky(int iMax)
 
 		cout << endl;
 
-		next_line(line);
+		compute_next_line(line);
 	}
 	cout << endl;
 }
@@ -70,6 +125,8 @@ void draw_shierpinsky(int iMax)
 
 void main()
 {
-	draw(17);
-	draw_shierpinsky(64);
+	draw_triangle(17);
+//	draw_triangle_negative(13);
+	draw_triangle_compute_each_line(17);
+//	draw_shierpinsky(64);
 }
