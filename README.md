@@ -9,6 +9,5 @@ This is a collection of maths c++ code, mostly in public domain, I also added my
 - test_Mersenne_prime: generate Mersenne primes numbers
 - test_syracuse: 3 algorithms to compute cycles or syracuse numbers and search for new possible cycles
 - test_polygon_area: compute the 2D polygon signed area using the Shoelace algorithm
-- test_pascal_triangle: some conjectures on the Pascal triangle (WIP)
 
 Feel free to add your own.
