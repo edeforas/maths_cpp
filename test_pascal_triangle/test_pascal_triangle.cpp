@@ -3,130 +3,120 @@
 
 #include <iostream>
 #include <iomanip>
-#include <vector>
+#include <cassert>
 using namespace std;
 
-void compute_first_line(vector<int>& line)
-{	// init to [ 1 0 0 ...]
-	line[0] = 1;
-	for (int i = 1; i < line.size(); i++)
-		line[i] = 0;
-}
-
-void compute_line(vector<int>& line,int iLine)
-{   // if we assume the first col is 1: we can compute all the line
-	line[0] = 1;
-	for (int p= 1; p < line.size(); p++)
-	{
-		line[p] = line[p - 1] * (iLine + 1 - p) / (p );
-	}
-}
-
-void compute_next_line(vector<int>& line)
-{   // if we assume the first col is 1: we can compute next line
-	int a = 1, b;
-	for (int i = 1; i < line.size(); i++)
-	{
-		b = line[i];
-		line[i] = a + b;
-		a = b;
-	}
-}
-
-void compute_prev_line(vector<int>& line)
-{   // if we assume the first col is 1: we can compute prev line
-	int a = 1;
-	for (int i = 1; i < line.size(); i++)
-	{
-		a = line[i]-a;
-		line[i]=a;
-	}
-}
-
-void print_line(vector<int>& line)
+class PascalCell
 {
-	// print the line before the first diagonal
-	for (int i = 0; i < line.size(); i++)
-		cout << setw(5) << line[i];
-	cout << endl;
-}
+public:
+	PascalCell()
+	{
+		init_at_line(1);
+	}
+
+	void init_at_line(int iLine)
+	{
+		_p = 0;
+		_n = iLine;
+		_iValue = 1;
+	}
+
+	void right() 
+	{
+		_iValue = (_iValue * (_n - _p)) / (_p + 1);
+		_p++;
+	}
+
+	void left() {}
+	void up()
+	{
+		_iValue = (_iValue * (_n - _p)) / (_n );
+		_n--;	
+	}
+	void down()
+	{
+		_iValue = (_iValue * (_n + 1 - _p)) / (_n + 1);
+		_n++;
+	}
+
+	int value()
+	{
+		return _iValue;
+	}
+
+private:
+	int _iValue;
+	int _n;
+	int _p;
+};
 
 void draw_triangle(int iMax)
 {
-	cout << "Print a small pascal triangle:" << endl;
+	cout << "Print a Pascal triangle:" << endl;
 
-	// create first line
-	vector<int> line(iMax);
-	compute_first_line(line);
-
-	for(int l =1;l<iMax;l++)
+	for(int l =0;l<iMax;l++)
 	{
-		print_line(line);
-		compute_next_line(line);
-	}			
-}
+		PascalCell pc;
+		pc.init_at_line(l);
 
-void draw_triangle_compute_each_line(int iMax)
-{
-	cout << "Print a small pascal triangle, compute each line:" << endl;
-
-	vector<int> line(iMax);
-
-	for (int l = 0; l < iMax; l++)
-	{
-		print_line(line);
-		compute_line(line,l);
-	}
-}
-
-void draw_triangle_negative(int iMax)
-{
-	cout << "Print the negative part using the reccurence equation in reverse (1st solution):" << endl;
-
-	// create first line
-	vector<int> line(iMax);
-	compute_first_line(line);
-
-	// go to the minimum (negative part)
-	for (int l = 0; l >= -iMax; l--)
-		compute_prev_line(line);
-
-	for (int l = -iMax; l < iMax; l++)
-	{
-		print_line(line);
-		compute_next_line(line);
-	}
-}
-
-void draw_shierpinsky(int iMax)
-{
-	cout << endl << "Print a pascal triangle using number parity, show the Shierpinsky fractal:" << endl;
-
-	// create first line
-	vector<int> line(iMax);
-	compute_first_line(line);
-
-	for (int l = 1; l < iMax; l++)
-	{
-		// print the line before the first diagonal, parity only
-		for (int i = 0; i < l; i++)
-			if ( (line[i] % 2) == 0)
-				cout << " ";
-			else
-				cout << "*";
-
+		for (int i = 0; i <= l; i++)
+		{
+			cout << setw(5) << pc.value();
+			pc.right();
+		}
 		cout << endl;
-
-		compute_next_line(line);
 	}
-	cout << endl;
 }
 
+int count(int iVal)
+{
+	// search and count for occurences
+	int iNbVal = 0;
+	PascalCell pc;
+	pc.init_at_line(iVal);
+	pc.right();
+	assert(pc.value() == iVal);
+
+	int v = 0;
+	do
+	{
+		v = pc.value();
+		cout << v << " ";
+
+		if (v == iVal)
+		{
+			iNbVal++;
+			pc.right();
+		}
+		
+		if (v < iVal)
+		{
+			pc.down();
+			if (pc.value() > iVal)
+			{
+				pc.up();
+				pc.right();
+			}
+		}
+
+		if (v > iVal)
+		{
+			pc.up();
+			if (pc.value() < iVal)
+			{
+				pc.down();
+				pc.right();
+			}
+		}
+	} while (v > 1);
+
+	return iNbVal;
+}
 
 void main()
 {
-	draw_triangle(17);
-//	draw_triangle_negative(13);
-	draw_triangle_compute_each_line(17);
-//	draw_shierpinsky(64);
+	draw_triangle(13);
+
+	for (int i = 2; i < 13; i++)
+		cout << "val=" << i << " count=" << count(i) << endl;
 }
