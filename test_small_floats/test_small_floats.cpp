@@ -196,60 +196,6 @@ private:
 	short _r;
 };
 /////////////////////////////////////////////////////////////////////////////////////////////////////
-class Fixpt8q4
-{
-public:
-	Fixpt8q4(float f)
-	{
-		_r = to_F8Q8(f);
-	}
-
-	Fixpt8q4(char r)
-	{
-		_r = r;
-	}
-
-	Fixpt8q4& operator+=(const Fixpt8q4& b)
-	{
-		_r += b._r;
-		return *this;
-	}
-
-	Fixpt8q4 operator+(const Fixpt8q4& b)
-	{
-		return Fixpt8q4(to_float(b._r) + to_float(_r));
-	}
-
-	Fixpt8q4 operator*(const Fixpt8q4& b)
-	{
-		return Fixpt8q4(to_float(_r) * to_float(b._r));
-	}
-
-	Fixpt8q4 operator/(const Fixpt8q4& b)
-	{
-		return Fixpt8q4(to_float(_r) / to_float(b._r));
-	}
-
-	friend std::ostream& operator<<(std::ostream& os, const Fixpt8q4& r)
-	{
-		os << to_float(r._r);
-		return os;
-	}
-
-private:
-	static float to_float(char c)
-	{
-		return ((float)c) / 16.f;
-	}
-
-	static char to_F8Q8(float f)
-	{
-		return (char)(f * 16.f + 0.5f);
-	}
-
-	char _r;
-};
-/////////////////////////////////////////////////////////////////////////////////////////////////////
 class FixptTanh8
 {
 public:
@@ -308,27 +254,26 @@ private:
 	char _r;
 };
 
-
+// choose your real number implementation below:
 //typedef float real;
 //typedef double real;
 //typedef long double real;
-//typedef RealDouble real;
-//typedef RealFloat real;
+//typedef RealDouble real; // same as double but in a class
+//typedef RealFloat real; // same as float but in a class
 //typedef Float8q8 real;
 //typedef Fixpt8q8 real;
-//typedef Fixpt8q4 real;
 typedef FixptTanh8 real;
 int main()
 {
-	cout << "size(real)=" << sizeof(real) << endl;
+	cout << "sizeof(real)=" << sizeof(real) << endl;
 
-	real x = 0.49f;
-
+	// newton step to sqrt(2) to test accuracy
+	real x = 2.f;
 	real u = 1.f;
 	for (int i = 0; i < 10; i++)
 	{
 		u = real(0.5f)*(u + real(x) / u);
-		cout << "i=" << i << " x=" << x << " u("<< i <<")=" << u << "   u(" << i<< ")**2=" << u * u << endl;
+		cout << "i=" << i << " x=" << x << " u("<< i <<")=" << u << " u(" << i<< ")**2=" << u * u << endl;
 	}
 
 	return 0;
