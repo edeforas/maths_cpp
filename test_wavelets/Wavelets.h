@@ -2,30 +2,24 @@
 // Par Rania ELDAHDAH, Etienne DEFORAS et Morgan ROCHE
 // version maj du 10/06/2023 : EDF
 
-#ifndef _wavelets_
-#define _wavelets_
+#ifndef _Wavelets_
+#define _Wavelets_
+
+#include <vector>
+using namespace std;
 
 class Wavelets
 {
 public:
-	Wavelets();
+	Wavelets(int nCoef=4);
 
-	void transform_wavelet_1d(int nn, double img[256]);
-	void transform_wavelet_2d(double img[256][256], double ond1[256][256]);
-
-	void untransform_wavelet_1d(int n, double img[256]);
-	void untransform_wavelet_2d(double ond2[256][256], double fic[256][256]);
-
-	void compress(double ond1[256][256], double ond2[256][256]);
-	void copy(const double source[256][256], double cible[256][256]);
-	double compare(double tab1[256][256], double tab2[256][256]);
+	void transform(const vector<double>& a, vector<double>& b);
+	void untransform(const vector<double>& a, vector<double>& b);
 
 private:
-	void initcoef(int n);
-	double compute_error(double ond2[256][256], int xmin, int xmax, int ymin, int ymax, double pourcent);
-	void zero(double cible[256][256], int xmin, int xmax, int ymin, int ymax, double erreur);
+	void initcoef(int nCoef);
 
-	int _ncof;
+	int _nCoef;
 	double* _paire;
 	double* _impaire;
 };

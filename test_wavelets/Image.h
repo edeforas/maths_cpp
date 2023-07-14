@@ -1,8 +1,9 @@
 #ifndef _Image_
 #define _Image_
 
-#include <assert.h>
-
+#include <cassert>
+#include <vector>
+using namespace std;
 
 class Image
 {
@@ -16,13 +17,11 @@ public:
         _iW=iW;
         _iH=iH;
         _iP=iP;
-        _data=new unsigned char[_iW*_iH*_iP];
+        _data.resize(_iW*_iH*_iP);
     }
 
     virtual ~Image()
-    {
-        delete [] _data;
-    }
+    { }
 
     int width() const
     {
@@ -39,17 +38,21 @@ public:
         return _iP;
     }
 
+    int size() const
+    {
+        return _iH * _iW * _iP;
+    }
+
     void resize(int iW,int iH,int iP)
     {
         assert(iW>=0);
         assert(iH>=0);
         assert(iP>=0);
 
-        delete [] _data;
         _iW=iW;
         _iH=iH;
         _iP=iP;
-        _data=new unsigned char[_iW*_iH*_iP];
+        _data.resize(_iW * _iH * _iP);
     }
 
     const unsigned char* value(int iX,int iY,int iP=0) const
@@ -61,7 +64,7 @@ public:
         assert(iY<_iH);
         assert(iP<_iP);
 
-        return _data +iP +_iP*_iW*iY +iX*_iP;
+        return _data.data() + iP + _iP * _iW * iY + iX * _iP;
     }
 
     unsigned char* value(int iX, int iY, int iP = 0)
@@ -73,7 +76,7 @@ public:
         assert(iY < _iH);
         assert(iP < _iP);
 
-        return _data + iP + _iP * _iW * iY + iX * _iP;
+        return _data.data() + iP + _iP * _iW * iY + iX * _iP;
     }
 
 
@@ -86,13 +89,20 @@ public:
         assert(iY<_iH);
         assert(iP<_iP);
 
-        return *(_data +iP +_iP*_iW*iY +iX*_iP);
+        return *(_data.data() + iP + _iP * _iW * iY + iX * _iP);
+    }
+
+    void to_double(vector<double>& img)
+    {
+        img.resize(size());
+        for (int ligne = 0; ligne < width(); ligne++)
+            for (int colonne = 0; colonne < height(); colonne++)
+                img[colonne + ligne * width()] = (*this)(ligne, colonne);
     }
 
 private:
     int _iW,_iH,_iP;
-    unsigned char * _data;
+    vector<unsigned char> _data;
 };
-
 
 #endif
