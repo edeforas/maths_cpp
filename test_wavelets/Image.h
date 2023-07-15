@@ -10,14 +10,7 @@ class Image
 public:
     Image(int iW=0,int iH=0,int iP=1)
     {
-        assert(iW>=0);
-        assert(iH>=0);
-        assert(iP>=0);
-
-        _iW=iW;
-        _iH=iH;
-        _iP=iP;
-        _data.resize(_iW*_iH*_iP);
+	resize(iW,iH,iP);
     }
 
     virtual ~Image()
