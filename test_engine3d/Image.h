@@ -10,7 +10,7 @@ class Image
 public:
     Image(int iW=0,int iH=0,int iP=1)
     {
-	resize(iW,iH,iP);
+	    resize(iW,iH,iP);
     }
 
     virtual ~Image()
@@ -46,6 +46,11 @@ public:
         _iH=iH;
         _iP=iP;
         _data.resize(_iW * _iH * _iP);
+    }
+
+    unsigned char* data()
+    {
+        return _data.data();
     }
 
     const unsigned char* value(int iX,int iY,int iP=0) const
