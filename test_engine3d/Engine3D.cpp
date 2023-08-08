@@ -5,7 +5,6 @@ using namespace std;
 
 //very old code
 
-#define PI (3.14159265359)
 #define MAXINT (1<<28)
 
 // used by mapfacet
@@ -13,25 +12,11 @@ using namespace std;
 #define MINZ  (100)
 
 ////////////////////////////////////////////////////////////////////////////////
-void Engine3D::set_camera(double ox, double oy, double oz, double ahead, double teta1, double teta2, double teta3, double facr)
+void Engine3D::set_camera(double ox, double oy, double oz, double ahead, double yaw, double pitch, double roll, double zoom)
 {
-	double dDegToRad = 2. * PI / 360.;
-
-	_camera.x = ox;
-	_camera.y = oy;
-	_camera.z = oz;
-
-	_camera.angle1 = teta1;
-	_camera.angle2 = teta2;
-	_camera.angle3 = teta3;
-	_camera.C1 = cos(teta1 * dDegToRad);
-	_camera.S1 = sin(teta1 * dDegToRad);
-	_camera.C2 = cos(teta2 * dDegToRad);
-	_camera.S2 = sin(teta2 * dDegToRad);
-	_camera.C3 = cos(teta3 * dDegToRad);
-	_camera.S3 = sin(teta3 * dDegToRad);
-	_camera.ahead = ahead;
-	_camera.zoomFactor = facr;
+	_camera.set_origin(ox, oy, oz, ahead);
+	_camera.set_angles(yaw, pitch, roll);
+	_camera.set_screen(_Xmax, _Ymax, zoom);
 }
 ////////////////////////////////////////////////////////////////////////////////
 Engine3D::Engine3D(int xm, int ym, int* pBuffer)
@@ -40,8 +25,6 @@ Engine3D::Engine3D(int xm, int ym, int* pBuffer)
 	_Ymax = ym;
 	_pBuffer = pBuffer;
 
-	_camera.screenCenterX = _Xmax / 2.;
-	_camera.screenCenterY = _Ymax / 2.;
 	_zbuffer = new float[_Xmax * _Ymax];
 	_zbuffer16 = new float[_Xmax * _Ymax / 16];
 	_zbuffer256 = new float[_Xmax * _Ymax / 256];
@@ -84,81 +67,27 @@ void Engine3D::draw_trianglecolor(Point3D& A, int pA, Point3D& B, int pB, Point3
 
 	for (t = 0; t < 1; t += 0.05)
 	{
-		E.x = t * A.x + (1 - t) * B.x;
-		E.y = t * A.y + (1 - t) * B.y;
-		E.z = t * A.z + (1 - t) * B.z;
+		E.x = t * A.x + (1. - t) * B.x;
+		E.y = t * A.y + (1. - t) * B.y;
+		E.z = t * A.z + (1. - t) * B.z;
 		draw_line(E, C, pC);
 	}
 
 	for (t = 0; t < 1; t += 0.05)
 	{
-		E.x = t * B.x + (1 - t) * C.x;
-		E.y = t * B.y + (1 - t) * C.y;
-		E.z = t * B.z + (1 - t) * C.z;
+		E.x = t * B.x + (1. - t) * C.x;
+		E.y = t * B.y + (1. - t) * C.y;
+		E.z = t * B.z + (1. - t) * C.z;
 		draw_line(E, A, pA);
 	}
 
 	for (t = 0; t < 1; t += 0.05)
 	{
-		E.x = t * C.x + (1 - t) * A.x;
-		E.y = t * C.y + (1 - t) * A.y;
-		E.z = t * C.z + (1 - t) * A.z;
+		E.x = t * C.x + (1. - t) * A.x;
+		E.y = t * C.y + (1. - t) * A.y;
+		E.z = t * C.z + (1. - t) * A.z;
 		draw_line(E, B, pB);
 	}
-}
-////////////////////////////////////////////////////////////////////////////////
-Point3D Engine3D::local_ref(const Point3D& pc) const
-{
-	Point3D pPixels;
-	pPixels.x = pc.x;
-	pPixels.y = pc.y;
-	pPixels.z = pc.z;
-
-	//converti une coord 3d en coord ecran ( camera)
-
-	//translation de repere
-	pPixels.x -= _camera.x;
-	pPixels.y -= _camera.y;
-	pPixels.z -= _camera.z;
-
-	//rotation autour de Oz ( fz ne change pas )
-	double tmp = pPixels.x;
-	pPixels.x = pPixels.x * _camera.C1 + pPixels.z * _camera.S1;
-	pPixels.z = pPixels.z * _camera.C1 - tmp * _camera.S1;
-
-	//rotation autour de Oy (fy ne change pas )
-	tmp = pPixels.y;
-	pPixels.y = pPixels.z * _camera.S2 - pPixels.y * _camera.C2;
-	pPixels.z = pPixels.z * _camera.C2 + tmp * _camera.S2;
-
-	//rotation autour de Oz ( pour la rotation de champ ) ( fz ne change pas )
-	tmp = pPixels.x;
-	pPixels.x = pPixels.x * _camera.C3 + pPixels.y * _camera.S3;
-	pPixels.y = pPixels.y * _camera.C3 - tmp * _camera.S3;
-
-	//on recule de cam.Recul (equivalent a avancer le point de recul )
-	pPixels.z = pPixels.z + _camera.ahead;
-
-	return pPixels;
-}
-////////////////////////////////////////////////////////////////////////////////
-bool Engine3D::compute_projection(Point3D& pPixels, int& ex, int& ey, float& zpx)
-{
-	Point3D pc = local_ref(pPixels);
-
-	//projection sur l'ecran
-	ex = int(pc.x * _camera.zoomFactor / pc.z + _camera.screenCenterX);
-	ey = int(pc.y * _camera.zoomFactor / pc.z + _camera.screenCenterY);
-
-	if ((ex < 0) || (ex >= _Xmax) || (ey < 0) || (ey >= _Ymax))
-		return false;
-
-	if (pc.z != 0.)
-		zpx = float(1. / pc.z);
-	else
-		zpx = 0.;
-
-	return true;
 }
 ////////////////////////////////////////////////////////////////////////////////
 void Engine3D::clear()
@@ -185,8 +114,8 @@ void Engine3D::draw_line(Point3D& p1, Point3D& p2, int col)
 	int i, im;
 	float zp1, zp2, fz, dz;
 
-	compute_projection(p1, x1, y1, zp1);
-	compute_projection(p2, x2, y2, zp2);
+	_camera.project(p1, x1, y1, zp1);
+	_camera.project(p2, x2, y2, zp2);
 
 	dx = x2 - x1;
 	dy = y2 - y1;
@@ -229,7 +158,7 @@ void Engine3D::draw_pixel(Point3D& pPixels, int col)
 	float zpx;
 	float* zp;
 
-	if (!compute_projection(pPixels, ix, iy, zpx))
+	if (!_camera.project(pPixels, ix, iy, zpx))
 		return;
 
 	//teste if visible in zbuffer

@@ -14,8 +14,7 @@ void draw(Image& img)
 	P3D p1, p2, p3, p4, p5, p6;
 
 	int xMax = img.width(), yMax = img.height();
-	double _dAngleX = 0., _dAngleY = 0.;
-	double _recul = 100.;
+	double dAngleX = 0., dAngleY = 0., dAhead = 100.;
 
 	Engine3D eng(xMax, yMax, (int*)img.data());
 
@@ -48,7 +47,7 @@ void draw(Image& img)
 	f236.ctx = 7 * 256; 	f236.cty = 21 * 256;
 
 	eng.LoadTex();
-	eng.set_camera(0., 0., 0., _recul, _dAngleX, _dAngleY, 0, 1000.);
+	eng.set_camera(0., 0., 0., dAhead, dAngleX, dAngleY, 0, 1000.);
 
 	Point3D a;
 	srand(0);
