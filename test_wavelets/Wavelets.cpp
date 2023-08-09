@@ -67,6 +67,8 @@ void Wavelets::transform(const vector<double>& a, vector<double>& b)
 {
     double wwwi, wwwinh;
     int n = a.size();
+
+    b.resize(n);
     for (int l = 0; l < (n >> 1); l++)
     {
         wwwinh = wwwi = 0.;
@@ -84,9 +86,8 @@ void Wavelets::transform(const vector<double>& a, vector<double>& b)
 void Wavelets::untransform(const vector<double>& a, vector<double>& b)
 {
     int n = a.size();
-    for (int k = 0; k < n; k++)
-        b[k] = 0.;
 
+    b.resize(n,0.);
     for (int col = 0; col < (n >> 1); col++)
     {
         double ai = a[col];
