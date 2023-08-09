@@ -3,7 +3,7 @@ using namespace std;
 
 #include "Engine3D.h"
 
-//very old code
+//very old code!!
 
 #define MAXINT (1<<28)
 
@@ -11,6 +11,95 @@ using namespace std;
 #define my_swap(a,b,t) { t=a; a=b; b=t; }
 #define MINZ  (100)
 
+////////////////////////////////////////////////////////////////////////////////
+Camera::Camera()
+{
+	set_angles(0., 0., 0.);
+	set_origin(0., 0., 0.,0.);
+	set_screen(0, 0, 0.);
+}
+////////////////////////////////////////////////////////////////////////////////
+void Camera::set_angles(double yaw, double pitch, double roll)
+{
+	double dDegToRad = 2. * 3.14159265359 / 360.;
+
+	_yaw = yaw;
+	_pitch = pitch;
+	_roll = roll;
+
+	_yawCos = cos(_yaw * dDegToRad);
+	_yawSin = sin(_yaw * dDegToRad);
+	_pitchCos = cos(_pitch * dDegToRad);
+	_pitchSin = sin(_pitch * dDegToRad);
+	_rollCos = cos(_roll * dDegToRad);
+	_rollSin = sin(_roll * dDegToRad);
+}
+////////////////////////////////////////////////////////////////////////////////
+void Camera::set_origin(double x, double y, double z, double ahead)
+{
+	_x = x; _y = y; _z = z;
+	_ahead = ahead;
+}
+////////////////////////////////////////////////////////////////////////////////
+void Camera::set_screen(int width, int height, double zoom)
+{
+	_screenCenterX = width / 2;
+	_screenCenterY = height / 2;
+	_zoomFactor = zoom;
+}
+////////////////////////////////////////////////////////////////////////////////
+Point3D Camera::local_ref(const Point3D& pc) const
+{
+	Point3D pPixels;
+	pPixels.x = pc.x;
+	pPixels.y = pc.y;
+	pPixels.z = pc.z;
+
+	//origin translation
+	pPixels.x -= _x;
+	pPixels.y -= _y;
+	pPixels.z -= _z;
+
+	//yaw rotation
+	double tmp = pPixels.x;
+	pPixels.x = pPixels.x * _yawCos + pPixels.z * _yawSin;
+	pPixels.z = pPixels.z * _yawCos - tmp * _yawSin;
+
+	//pitch rotation
+	tmp = pPixels.y;
+	pPixels.y = pPixels.z * _pitchSin - pPixels.y * _pitchCos;
+	pPixels.z = pPixels.z * _pitchCos + tmp * _pitchSin;
+
+	//roll rotation
+	tmp = pPixels.x;
+	pPixels.x = pPixels.x * _rollCos + pPixels.y * _rollSin;
+	pPixels.y = pPixels.y * _rollCos - tmp * _rollSin;
+
+	// ahead move
+	pPixels.z = pPixels.z + _ahead;
+
+	return pPixels;
+}
+////////////////////////////////////////////////////////////////////////////////
+bool Camera::project(Point3D& pPixels, int& ex, int& ey, float& zpx)
+{
+	Point3D pc = local_ref(pPixels);
+
+	//projection sur l'ecran
+	ex = int(pc.x * _zoomFactor / pc.z + _screenCenterX);
+	ey = int(pc.y * _zoomFactor / pc.z + _screenCenterY);
+
+	if ((ex < 0) || (ex >= _screenCenterX * 2) || (ey < 0) || (ey >= _screenCenterY * 2))
+		return false;
+
+	if (pc.z != 0.)
+		zpx = float(1. / pc.z);
+	else
+		zpx = 0.;
+
+	return true;
+}
+////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 void Engine3D::set_camera(double ox, double oy, double oz, double ahead, double yaw, double pitch, double roll, double zoom)
 {

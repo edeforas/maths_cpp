@@ -38,88 +38,13 @@ public:
 class Camera
 {
 public:
-
-	void set_angles(double yaw, double pitch, double roll)
-	{
-		double dDegToRad = 2. * 3.14159265359 / 360.;
-
-		_yaw = yaw;
-		_pitch = pitch;
-		_roll = roll;
-
-		_yawCos = cos(_yaw * dDegToRad);
-		_yawSin = sin(_yaw * dDegToRad);
-		_pitchCos = cos(_pitch * dDegToRad);
-		_pitchSin = sin(_pitch * dDegToRad);
-		_rollCos = cos(_roll * dDegToRad);
-		_rollSin = sin(_roll * dDegToRad);
-	}
-
-	void set_origin(double x, double y, double z, double ahead)
-	{
-		_x = x; _y = y; _z = z;
-		_ahead = ahead;
-	}
-
-	void set_screen(int width, int height, double zoom)
-	{
-		screenCenterX = width / 2;
-		screenCenterY = height / 2;
-		zoomFactor = zoom;
-	}
-
-	Point3D local_ref(const Point3D& pc) const
-	{
-		Point3D pPixels;
-		pPixels.x = pc.x;
-		pPixels.y = pc.y;
-		pPixels.z = pc.z;
-
-		//origin translation
-		pPixels.x -= _x;
-		pPixels.y -= _y;
-		pPixels.z -= _z;
-
-		//yaw rotation
-		double tmp = pPixels.x;
-		pPixels.x = pPixels.x * _yawCos + pPixels.z * _yawSin;
-		pPixels.z = pPixels.z * _yawCos - tmp * _yawSin;
-
-		//pitch rotation
-		tmp = pPixels.y;
-		pPixels.y = pPixels.z * _pitchSin - pPixels.y * _pitchCos;
-		pPixels.z = pPixels.z * _pitchCos + tmp * _pitchSin;
-
-		//roll rotation
-		tmp = pPixels.x;
-		pPixels.x = pPixels.x * _rollCos + pPixels.y * _rollSin;
-		pPixels.y = pPixels.y * _rollCos - tmp * _rollSin;
-
-		// ahead move
-		pPixels.z = pPixels.z + _ahead;
-
-		return pPixels;
-	}
-
-	bool project(Point3D& pPixels, int& ex, int& ey, float& zpx)
-	{
-		Point3D pc = local_ref(pPixels);
-
-		//projection sur l'ecran
-		ex = int(pc.x * zoomFactor / pc.z + screenCenterX);
-		ey = int(pc.y * zoomFactor / pc.z + screenCenterY);
-
-		if ((ex < 0) || (ex >= screenCenterX*2) || (ey < 0) || (ey >= screenCenterY*2))
-			return false;
-
-		if (pc.z != 0.)
-			zpx = float(1. / pc.z);
-		else
-			zpx = 0.;
-
-		return true;
-	}
-
+	Camera();
+	void set_angles(double yaw, double pitch, double roll);
+	void set_origin(double x, double y, double z, double ahead);
+	void set_screen(int width, int height, double zoom);
+	Point3D local_ref(const Point3D& pc) const;
+	bool project(Point3D& pPixels, int& ex, int& ey, float& zpx);
+	
 private:
 	//rotation angles
 	double _yawCos, _yawSin, _pitchCos, _pitchSin, _rollCos, _rollSin;
@@ -129,9 +54,8 @@ private:
 	double _x, _y, _z, _ahead; 
 
 	// screen properties
-	double zoomFactor;
-	int screenCenterX, screenCenterY;
-
+	double _zoomFactor;
+	int _screenCenterX, _screenCenterY;
 };
 
 class Engine3D

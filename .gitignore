@@ -5,3 +5,7 @@
 /test_syracuse/CMakeSettings.json
 CMakeFiles
 Debug
+*.vcxproj*
+*.sln
+CMakeCache.txt
+cmake_install.cmake

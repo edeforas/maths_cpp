@@ -53,7 +53,7 @@ public:
         return _data.data();
     }
 
-    const unsigned char* value(int iX,int iY,int iP=0) const
+    const unsigned char* pixel(int iX,int iY,int iP=0) const
     {
         assert(iX>=0);
         assert(iY>=0);
@@ -65,7 +65,7 @@ public:
         return _data.data() + iP + _iP * _iW * iY + iX * _iP;
     }
 
-    unsigned char* value(int iX, int iY, int iP = 0)
+    unsigned char* pixel(int iX, int iY, int iP = 0)
     {
         assert(iX >= 0);
         assert(iY >= 0);
@@ -76,7 +76,6 @@ public:
 
         return _data.data() + iP + _iP * _iW * iY + iX * _iP;
     }
-
 
     unsigned char& operator()(int iX,int iY,int iP=0)
     {

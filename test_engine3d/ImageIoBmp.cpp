@@ -59,7 +59,7 @@ bool ImageIoBmp::read(string sFilename, Image* pImage)
 		unsigned char cTmp[3] = { 0 }, * pLineY, cTmpR;
 		for (int iY = 0; iY < iHeight; iY++)
 		{
-			pLineY = pImage->value(0, iHeight - iY - 1, 0);
+			pLineY = pImage->pixel(0, iHeight - iY - 1, 0);
 			fbmp.read((char*)pLineY, iLineWidthPerfect);
 
 			//swap R and B
@@ -85,7 +85,7 @@ bool ImageIoBmp::read(string sFilename, Image* pImage)
 
 		for (int iY = iHeight - 1; iY >= 0; iY--)
 		{
-			pLineY = pImage->value(0, iY, 0);
+			pLineY = pImage->pixel(0, iY, 0);
 			fbmp.read((char*)pLineY, iWidth);
 			fbmp.read((char*)cTmp, iPack);
 		}
@@ -144,6 +144,8 @@ bool ImageIoBmp::write(string sFilename, const Image* pImage)
 	short sNbChannels = 24;
 	if (iPlanes == 1)
 		sNbChannels = 8;
+	if (iPlanes == 4)
+		sNbChannels = 32;
 	fbmp.write((char*)&sNbChannels, 2);
 
 	int iZero = 0;
@@ -178,7 +180,7 @@ bool ImageIoBmp::write(string sFilename, const Image* pImage)
 		unsigned char* pLineOut = new unsigned char[iLineWidthBytes + 3];
 		for (int iY = 0; iY < iHeight; iY++)
 		{
-			pLineY = pImage->value(0, iHeight - iY - 1, 0);
+			pLineY = pImage->pixel(0, iHeight - iY - 1, 0);
 			for (int iC = 0; iC < iLineWidthBytes; iC += 3)
 			{
 				pLineOut[iC] = pLineY[iC + 2];
@@ -197,7 +199,7 @@ bool ImageIoBmp::write(string sFilename, const Image* pImage)
 		unsigned char* pLineOut = new unsigned char[iLineWidthBytes + 3];
 		for (int iY = 0; iY < iHeight; iY++)
 		{
-			pLineY = pImage->value(0, iHeight - iY - 1, 0);
+			pLineY = pImage->pixel(0, iHeight - iY - 1, 0);
 			for (int iC = 0; iC < iLineWidthBytes; iC += 4)
 			{
 				pLineOut[iC] = pLineY[iC + 2];
@@ -216,7 +218,7 @@ bool ImageIoBmp::write(string sFilename, const Image* pImage)
 	{
 		for (int iY = 0; iY < iHeight; iY++)
 		{
-			pLineY = pImage->value(0, iHeight - iY - 1, 0);
+			pLineY = pImage->pixel(0, iHeight - iY - 1, 0);
 			fbmp.write((const char*)pLineY, iLineWidthBytes);
 			fbmp.write((const char*)cTmp, iPack);
 		}

@@ -21,6 +21,13 @@ int main()
 		exit(-1);
 	}
 
+	// test 32 bit bmp write: black and white Sierpinsky fractal
+	Image img(512, 512, 4);
+	for(int w=0;w<img.width();w++)
+		for (int h = 0; h < img.height(); h++)
+			*(int*)(img.pixel(w, h)) = ((w & h)==0) * ((1<<25)-1); //Sierpinsky
+	ImageIoBmp::write("sierpinsky.bmp",&img);
+
 	return 0;
 }
 ////////////////////////////////////////////////////////////////////////////////
