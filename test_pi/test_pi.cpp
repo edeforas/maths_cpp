@@ -75,11 +75,70 @@ void polygon()
     }
 }
 //////////////////////////////////////////////////////////////////////////////
+void machin1()
+{
+    //use pi = 4 * ATAN(1)
+    double dEstPi = 0.;
+    double dMinusOne = 1.;
+    for (int i = 0; i < 1000; i++)
+    {
+        dEstPi += 4. * dMinusOne * (1. / (2. * i + 1.));
+
+        cout << setprecision(15) << "EstPi=" << dEstPi << endl;
+        dMinusOne = - dMinusOne;
+    }
+}
+//////////////////////////////////////////////////////////////////////////////
+void machin2()
+{
+    //use pi=4*ATAN(1/2)+4*atan(1/3)
+    double dEstPi = 0.;
+    double dMinusOne = 1.;
+
+    double k2=1./2.;
+    double k3 =1./3.;
+
+    for (int i = 0; i < 10; i++)
+    {
+        dEstPi += 4. * dMinusOne * (k2 / (2. * i + 1.));
+        dEstPi += 4. * dMinusOne * (k3 / (2. * i + 1.));
+
+        cout << setprecision(15) << "EstPi=" << dEstPi << endl;
+        dMinusOne = -dMinusOne;
+
+        k2 *= (1. / 2.) * (1. / 2.);
+        k3 *= (1. / 3.) * (1. / 3.);
+    }
+}
+//////////////////////////////////////////////////////////////////////////////
+void machin3()
+{
+    // use pi=16*ATAN(1/5)-4*atan(1/239)
+    double dEstPi = 0.;
+    double dMinusOne = 1.;
+
+    double k2 = 1. / 5.;
+    double k3 = 1. / 239.;
+
+    for (int i = 0; i < 10; i++)
+    {
+        dEstPi += 16. * dMinusOne * (k2 / (2. * i + 1.));
+        dEstPi -= 4. * dMinusOne * (k3 / (2. * i + 1.));
+
+        cout << setprecision(15) << "EstPi=" << dEstPi << endl;
+        dMinusOne = -dMinusOne;
+
+        k2 *= (1. / 5.) * (1. / 5.);
+        k3 *= (1. / 239.) * (1. / 239.);
+    }
+}
+//////////////////////////////////////////////////////////////////////////////
 int main()
 {
     //random_sieve();
     //euler();
     //compte_goutte();
-    polygon();
+    //polygon();
+    machin3();
     return 0;
 }
