@@ -2,7 +2,7 @@
 #include <cmath>
 using namespace std;
 
-#define N 20
+#define N (20)
 
 class MyCordic
 {
@@ -19,7 +19,7 @@ public:
         }
     }
 
-    double calc(double beta)
+    double compute(double beta)
     {
         double x=invSumK, y=0.;
 
@@ -39,7 +39,7 @@ public:
                 beta-=atanPow2[i];
                 x=xn;
             }
-            cout << "cos(beta)=" << x << " sin(beta)=" << y << " beta_reste=" << beta << endl;
+            cout << "cos(beta)=" << x << " sin(beta)=" << y << " beta_reminder=" << beta << endl;
         }
 
         return x; //sin
@@ -55,6 +55,6 @@ int main()
 {
     MyCordic m;
     m.init();
-    m.calc(1.2);
+    m.compute(1.2);
     return 0;
 }

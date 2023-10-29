@@ -1,3 +1,0 @@
-cmake_minimum_required(VERSION 3.20.0)
-project (test_gaussian_noise_computation)
-add_executable(test_gaussian_noise_computation test_gaussian_noise_computation.cpp)

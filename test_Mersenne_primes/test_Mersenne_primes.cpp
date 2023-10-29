@@ -36,7 +36,7 @@ bool is_mersenne_prime(int iQ)
     }
     else
     {
-        cout << "q= " << iQ << "  Sn= " << Sn << "  Mq= " << Mq << " is not prime!" << endl;
+        cout << "q= " << iQ << "  Sn= " << Sn << "  Mq= " << Mq << " is not prime." << endl;
         return false;
     }
 }
