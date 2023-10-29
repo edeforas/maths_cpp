@@ -46,14 +46,13 @@ void euler()
 }
 //////////////////////////////////////////////////////////////////////////////
 //from the book "Le merveilleux nombre PI" J.P. Delahaye
+// lots of warnings to keep the code ultra small
 void compte_goutte()
 {
     int a=10000,b=0,c=8400,d,e=0,f[8401],g;
-    for ( ;b-c ;)
-        f[b++]=a/5;
+    for ( ;b-c ;) f[b++]=a/5;
     for(;d=0,g=c*2;c-=14,printf("%.4d",e+d/a),e=d%a)
-        for(b=c ;d+=f[b]*a,f[b]=d%--g,d/=g--,--b;d*=b)
-        ;
+        for(b=c ;d+=f[b]*a,f[b]=d%--g,d/=g--,--b;d*=b);
 }
 //////////////////////////////////////////////////////////////////////////////
 void polygon()
@@ -75,9 +74,10 @@ void polygon()
     }
 }
 //////////////////////////////////////////////////////////////////////////////
-void machin1()
+void atan1coef()
 {
-    //use pi = 4 * ATAN(1)
+    // not optimized
+    cout << "Atan method: pi=4 * ATAN(1)" << endl;
     double dEstPi = 0.;
     double dMinusOne = 1.;
     for (int i = 0; i < 1000; i++)
@@ -89,9 +89,11 @@ void machin1()
     }
 }
 //////////////////////////////////////////////////////////////////////////////
-void machin2()
+void atan2coef()
 {
-    //use pi=4*ATAN(1/2)+4*atan(1/3)
+    // not optimized
+    cout << "Atan method: pi=4*ATAN(1/2)+4*atan(1/3)" << endl;
+
     double dEstPi = 0.;
     double dMinusOne = 1.;
 
@@ -111,9 +113,11 @@ void machin2()
     }
 }
 //////////////////////////////////////////////////////////////////////////////
-void machin3()
+void machin()
 {
-    // use pi=16*ATAN(1/5)-4*atan(1/239)
+    // not optimized
+    cout << "Machin Atan method: pi=16*ATAN(1/5)-4*atan(1/239)" << endl;
+
     double dEstPi = 0.;
     double dMinusOne = 1.;
 
@@ -139,6 +143,6 @@ int main()
     //euler();
     //compte_goutte();
     //polygon();
-    machin3();
+    machin();
     return 0;
 }
