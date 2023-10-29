@@ -39,16 +39,15 @@ int main()
 
 	for (int iNbThreads = 1; iNbThreads < 16; iNbThreads++)
 	{
+		total = 0;
 		vector<int> val;
-		double total = 0.;
 
 		for (int i = 0; i < iNbThreads; i++)
 			val.push_back(0);
 
 		std::chrono::time_point<std::chrono::system_clock> start, end;
 		start = std::chrono::system_clock::now();
-
-		std::mutex m;
+		
 		std::for_each(std::execution::par_unseq, val.begin(), val.end(), monte_carlo_count_pi );
 		end = std::chrono::system_clock::now();
 		auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds> 	(end - start).count();

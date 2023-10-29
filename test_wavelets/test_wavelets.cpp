@@ -7,7 +7,7 @@ using namespace std;
 #include "Wavelets.h"
 
 ///////////////////////////////////////////////////////////////////////////////
-void print(const vector<double> a)
+void print(const vector<double>& a)
 {
 	for (int i = 0; i < a.size(); i++)
 		cout << setprecision(2) << a[i] << " ";
