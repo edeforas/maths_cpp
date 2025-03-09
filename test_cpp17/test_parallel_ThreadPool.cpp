@@ -1,5 +1,6 @@
 #include <iostream>
 #include <mutex>
+#include <chrono>
 using namespace std;
 
 #include "ThreadPool.h"
@@ -37,12 +38,11 @@ int main()
 	for (int iNbThreads = 1; iNbThreads < 16; iNbThreads++)
 	{
 		total = 0.;
-		std::chrono::time_point<std::chrono::system_clock> start, end;
-		start = std::chrono::system_clock::now();
+		auto start = std::chrono::system_clock::now();
 		
 		ThreadPool_for(monte_carlo_count_pi,0, iNbThreads);
 
-		end = std::chrono::system_clock::now();
+		auto end = std::chrono::system_clock::now();
 		int elapsed_ms =(int)( std::chrono::duration_cast<std::chrono::milliseconds> 	(end - start).count() );
 		int iSharedTimeByThread = elapsed_ms / iNbThreads;
 		std::cout << endl << "nb_thread=" << iNbThreads << " pi= " << total / iNbThreads << " time/crible=" << iSharedTimeByThread << "ms" << endl;

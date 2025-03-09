@@ -5,6 +5,7 @@
 #include <execution>
 #include <thread>
 #include <mutex>
+#include <chrono>
 using namespace std;
 
 double total = 0.;
@@ -45,11 +46,10 @@ int main()
 		for (int i = 0; i < iNbThreads; i++)
 			val.push_back(0);
 
-		std::chrono::time_point<std::chrono::system_clock> start, end;
-		start = std::chrono::system_clock::now();
+		auto start = std::chrono::system_clock::now();
 		
 		std::for_each(std::execution::par_unseq, val.begin(), val.end(), monte_carlo_count_pi );
-		end = std::chrono::system_clock::now();
+		auto end = std::chrono::system_clock::now();
 		auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds> 	(end - start).count();
 		auto iSharedTimeByThread = elapsed_ms / iNbThreads;
 		std::cout << endl << "nb_thread=" << iNbThreads << " pi= " << total / iNbThreads << " time/crible=" << iSharedTimeByThread << "ms" << endl;

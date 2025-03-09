@@ -1,6 +1,6 @@
 // Programme de Compression des images par Ondelettes
-// Par Rania ELDAHDAH, Etienne DEFORAS et Morgan ROCHE
-// version maj du 10/06/2023 : EDF
+// by Rania ELDAHDAH, Etienne DEFORAS and Morgan ROCHE
+// updated 3/9/2025
 
 #ifndef _Wavelets_
 #define _Wavelets_
@@ -17,11 +17,11 @@ public:
 	void untransform(const vector<double>& a, vector<double>& b);
 
 private:
-	void initcoef(int nCoef);
+	void init(int nCoef);
 
 	int _nCoef;
-	double* _paire;
-	double* _impaire;
+	const double* _even;
+	vector<double> _odd;
 };
 
 #endif

@@ -4,6 +4,7 @@
 #include <vector>
 #include <execution>
 #include <thread>
+#include <chrono>
 using namespace std;
 
 double total = 0.;
@@ -40,9 +41,7 @@ int main()
 	{
 		total = 0.;
 
-		std::chrono::time_point<std::chrono::system_clock> start, end;
-		start = std::chrono::system_clock::now();
-		
+		auto start = std::chrono::system_clock::now();
 		
 		// run all threads and wait jobs end
 		vector<thread> allThreads;		
@@ -52,7 +51,7 @@ int main()
 			allThreads[iT].join();
 
 		
-		end = std::chrono::system_clock::now();
+		auto end = std::chrono::system_clock::now();
 		int elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds> 	(end - start).count();
 		int iSharedTimeByThread = elapsed_ms / iNbThreads;
 		std::cout << endl << "nb_thread=" << iNbThreads << " pi= " << total / iNbThreads << " time/crible=" << iSharedTimeByThread << "ms" << endl;
